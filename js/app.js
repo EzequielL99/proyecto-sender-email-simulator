@@ -1,5 +1,6 @@
 // Variables
 const btnEnviar = document.querySelector('#enviar');
+const btnReset = document.querySelector('#resetBtn');
 const formulario = document.querySelector('#enviar-mail');
 
 // Variables para campos
@@ -25,6 +26,12 @@ function eventListeners(){
     email.addEventListener('blur', validarFormulario);
     asunto.addEventListener('blur', validarFormulario);
     mensaje.addEventListener('blur', validarFormulario);
+
+    // Reset del formulario
+    btnReset.addEventListener('click', resetFormulario);
+
+    // Enviar formulario
+    formulario.addEventListener('submit', enviarEmail);
 }
 
 // Funciones
@@ -80,17 +87,16 @@ function validarFormulario(e){
     const { email, asunto, mensaje } = campos;
     
     if(email && asunto && mensaje){
-        
+        btnEnviar.removeAttribute('disabled');
+        btnEnviar.classList.remove('cursor-not-allowed', 'opacity-50');
     }
-
-    console.log(errores);
     
 }
 
 function mostrarError(mensaje){
     const mensajeError = document.createElement('p');
     mensajeError.textContent = mensaje;
-    mensajeError.classList.add('border', 'border-red-500', 'background-red-100', 'text-red-500', 'p-3', 'mt-5', 'text-center', 'error');
+    mensajeError.classList.add('border', 'border-red-500', 'bg-red-100', 'text-red-500', 'p-3', 'mt-5', 'text-center', 'error');
 
     const errores = document.querySelectorAll('.error');
 
@@ -99,4 +105,38 @@ function mostrarError(mensaje){
 
     
 
+}
+
+// Enviar eMail
+function enviarEmail(e){
+    e.preventDefault();
+    
+    // Mostrar el spinner
+    const spinner = document.querySelector('#spinner');
+    spinner.style.display = 'flex';
+
+    // Despues de 3 seg. ocultar el spinner y mostrar el mensaje
+    setTimeout(() => {
+        spinner.style.display = 'none';
+
+        // Mensaje que dice que se envio correctamente
+        const p = document.createElement('P');
+        p.textContent = 'Correo enviado con exito';
+        p.classList.add('border', 'border-green-500', 'bg-green-500', 'text-white', 'p-2', 'my-5', 'text-center');
+        formulario.insertBefore(p, spinner);
+
+        setTimeout(() => {
+            p.remove(); // Elimina el mensaje de exito
+
+            resetFormulario();
+        }, 5000);
+
+    }, 3000);
+}
+
+// Funcion que resetea el formulario
+function resetFormulario(){
+    formulario.reset();
+
+    iniciarApp();
 }
